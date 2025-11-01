@@ -2,12 +2,13 @@
 const A = L.latLng(55.743076, 37.600931); // верх-левый
 const B = L.latLng(55.741647, 37.604783); // верх-правый
 const C = L.latLng(55.742281, 37.600060); // низ-левый
-const D = L.latLng(C.lat, B.lng);          // низ-правый
+const D = L.latLng(55.740682, 37.603843); // реальный низ-правый
 
 const planBounds = L.latLngBounds([A, D]);
 
 const map = L.map('map');
-map.fitBounds(planBounds, {padding:[30,30]});
+map.fitBounds( L.latLngBounds([A, D]), {padding:[60,60]} ); // 60px поля
+
 
 // подложка
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
