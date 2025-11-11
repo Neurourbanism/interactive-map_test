@@ -1,14 +1,17 @@
 // -------- контрольные точки генплана -----------
-const A = L.latLng(55.743076, 37.600931); // верх-левый
-const B = L.latLng(55.741647, 37.604783); // верх-правый
-const C = L.latLng(55.742281, 37.600060); // низ-левый
-const D = L.latLng(55.740682, 37.603843); // реальный низ-правый
+const A = L.latLng(55.74309207410261, 37.60094412479446); // верх-левый
+const B = L.latLng(55.74159932245304, 37.604669304174124); // верх-правый
+const C = L.latLng(55.742289854123555, 37.60009626314388); // низ-левый
+const D = L.latLng(55.7407158302922, 37.60376732369479); // низ-правый
 
-const planBounds = L.latLngBounds([A, D]);
+// границы изображения: [[south, west], [north, east]]
+const planBounds = L.latLngBounds(
+  [Math.min(A.lat, B.lat, C.lat, D.lat), Math.min(A.lng, B.lng, C.lng, D.lng)],
+  [Math.max(A.lat, B.lat, C.lat, D.lat), Math.max(A.lng, B.lng, C.lng, D.lng)]
+);
 
 const map = L.map('map');
-map.fitBounds( L.latLngBounds([A, D]), {padding:[60,60]} ); // 60px поля
-
+map.fitBounds(planBounds, {padding:[60,60]}); // 60px поля
 
 // подложка
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
@@ -16,8 +19,8 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
   attribution:'© OSM, Carto'
 }).addTo(map);
 
-// повернутый оверлей
-L.imageOverlay.rotated('images/plan.jpg', A, B, C, {opacity:0.8}).addTo(map);
+// повернутый оверлей (A=upperLeft, B=upperRight, C=lowerLeft)
+L.imageOverlay.rotated('images/plan_georeferenced_final.png', A, B, C, {opacity:0.8}).addTo(map);
 
 // -------- маркер-иконка ----------
 const blueIcon = L.icon({
@@ -41,3 +44,4 @@ fetch('data/points.geojson')
       }
     }).addTo(map);
   });
+
