@@ -46,20 +46,21 @@ fetch('data/points.geojson')
       onEachFeature: (f, lyr) => {
         const p = f.properties || {};
 
-        // корректный template-literal
+        // ПРАВИЛЬНЫЙ template-literal  ▼▼▼
         lyr.bindPopup(
           `<h3 class="popup-title">${p.name || ''}</h3>
            ${p.img ? `<img class="popup-img" src="${p.img}"><br>` : ''}
            ${p.descr || ''}`
         );
 
-        // безопасно определяем группу
+        // распределяем по группам
         const type   = (p.layer || 'genplan').trim().toLowerCase();
         const target = layers[type] || layers.genplan;
         target.addLayer(lyr);
       }
     });
   });
+
 
 // ---------- чек-боксы ----------
 L.control.layers(
@@ -74,5 +75,6 @@ L.control.layers(
 // показываем ТОЛЬКО генплан при старте
 layers.genplan.addTo(map);
 // layers.transport.addTo(map);   // ← строку убрали
+
 
 
