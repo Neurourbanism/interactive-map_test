@@ -20,19 +20,16 @@ L.tileLayer(
 
 // ---------- слой-контейнеры ----------
 const layers = {
-  genplan   : L.layerGroup(),        // картинка + маркеры генплана
-  transport : L.layerGroup()         // картинка + маркеры транспорта
+  genplan  : L.layerGroup(),   // картинка + маркеры генплана
+  transport: L.layerGroup()    // картинка + маркеры транспорта
 };
 
 // ---------- изображения-оверлеи ----------
-const imgGenplan   = L.imageOverlay(
-  'images/plan_georeferenced_final.png', planBounds, { opacity: 0.8 }
-).addTo(layers.genplan);             // сразу кладём в группу
+L.imageOverlay('images/plan_georeferenced_final.png',  planBounds, {opacity:0.8})
+ .addTo(layers.genplan);
 
-const imgTransport = L.imageOverlay(
-  'images/plan_georeferenced_finalBlack.png',     // ← ваша схема транспорта
-  planBounds, { opacity: 0.7 }
-).addTo(layers.transport);
+L.imageOverlay('images/plan_georeferenced_finalBlack.png', planBounds, {opacity:0.7})
+ .addTo(layers.transport);
 
 // ---------- иконка ----------
 const blueIcon = L.icon({
@@ -45,17 +42,20 @@ fetch('data/points.geojson')
   .then(r => r.json())
   .then(json => {
     L.geoJSON(json, {
-      pointToLayer: (_, latlng) => L.marker(latlng, { icon: blueIcon }),
+      pointToLayer : (_, latlng) => L.marker(latlng, { icon: blueIcon }),
       onEachFeature: (f, lyr) => {
         const p = f.properties || {};
+
+        // корректный template-literal
         lyr.bindPopup(
           `<h3 class="popup-title">${p.name || ''}</h3>
            ${p.img ? `<img class="popup-img" src="${p.img}"><br>` : ''}
            ${p.descr || ''}`
         );
 
-        // в GeoJSON добавьте поле layer: "genplan" | "transport"
-        const target = layers[p.layer] || layers.genplan;
+        // безопасно определяем группу
+        const type   = (p.layer || 'genplan').trim().toLowerCase();
+        const target = layers[type] || layers.genplan;
         target.addLayer(lyr);
       }
     });
@@ -63,14 +63,14 @@ fetch('data/points.geojson')
 
 // ---------- чек-боксы ----------
 L.control.layers(
-  null,                              // базовых карт нет
+  null,
   {
     'Генплан'   : layers.genplan,
     'Транспорт' : layers.transport
   },
-  { collapsed: false }               // всегда раскрыт
+  { collapsed:false }
 ).addTo(map);
 
-// по умолчанию показываем оба (если нужно только один — уберите .addTo выше)
+// по умолчанию показываем оба слоя
 layers.genplan.addTo(map);
 layers.transport.addTo(map);
