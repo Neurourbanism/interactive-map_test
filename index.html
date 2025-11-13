@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>Interactive Map</title>
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    /* простейший лайтбокс */
+    .lb-overlay{
+      position:fixed; inset:0; z-index:10000;
+      background:rgba(0,0,0,.8);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .lb-overlay img{max-width:90%; max-height:90%;}
+    .lb-close{
+      position:absolute; top:20px; right:30px;
+      font:32px/1 sans-serif; color:fff; background:none; border:none; cursor:pointer;
+    }
+  </style>
 </head>
 <body>
-
   <div id="map" style="height:100vh"></div>
 
-  <!-- Leaflet core -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Плагин для повернутого оверлея -->
   <script src="https://unpkg.com/leaflet-imageoverlay-rotated"></script>
-
-  <!-- Твой код -->
   <script src="js/script.js"></script>
 </body>
 </html>
