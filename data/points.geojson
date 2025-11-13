@@ -4,9 +4,10 @@
 
     { "type": "Feature",
       "properties": {
-        "name": "Пешеходная аллея",
-        "img": "images/alley1.jpg",
-        "descr": "Аллея с деревьями, скамейками и беседками²"
+        "name" : "Пешеходная аллея",
+        "layer": "transport",
+        "img"  : "images/alley1.jpg",
+        "descr": "Аллея с деревьями, скамейками и беседками"
       },
       "geometry": {
         "type": "Point",
@@ -16,8 +17,9 @@
 
     { "type": "Feature",
       "properties": {
-        "name": "Детская площадка",
-        "img": "images/playground.jpg",
+        "name" : "Детская площадка",
+        "layer": "genplan",
+        "img"  : "images/playground.jpg",
         "descr": "Площадь 0,8 га"
       },
       "geometry": {
@@ -28,8 +30,9 @@
 
     { "type": "Feature",
       "properties": {
-        "name": "Жилой дом",
-        "img": "images/house.jpg",
+        "name" : "Жилой дом",
+        "layer": "genplan",
+        "img"  : "images/house.jpg",
         "descr": "Жилой дом переменной этажности"
       },
       "geometry": {
@@ -40,8 +43,9 @@
 
     { "type": "Feature",
       "properties": {
-        "name": "Жилой дом",
-        "img": "images/house2.jpg",
+        "name" : "Жилой дом",
+        "layer": "genplan",
+        "img"  : "images/house2.jpg",
         "descr": "Жилой дом со встроенными кафе и магазинами на первом этаже"
       },
       "geometry": {
