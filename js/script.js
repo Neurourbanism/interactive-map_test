@@ -71,6 +71,8 @@ L.control.layers(
   { collapsed:false }
 ).addTo(map);
 
-// по умолчанию показываем оба слоя
+// показываем ТОЛЬКО генплан при старте
 layers.genplan.addTo(map);
-layers.transport.addTo(map);
+// layers.transport.addTo(map);   // ← строку убрали
+
+
