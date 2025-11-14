@@ -1,5 +1,5 @@
 /* =======================================
-   Leaflet карта + категории маркеров
+   Leaflet-карта + цветные категории
    ======================================= */
 
 /* ---------- контрольные точки ---------- */
@@ -23,11 +23,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
 /* ---------- контейнеры слоёв ---------- */
 const layers = { genplan:L.layerGroup(), transport:L.layerGroup() };
 
-/* ---------- генплан сразу ---------- */
+/* ---------- генплан (сразу) ---------- */
 L.imageOverlay('images/plan_georeferenced_finalSmall.webp', planBounds,{opacity:.8})
  .addTo(layers.genplan);
 
-/* ---------- транспорт лениво ---------- */
+/* ---------- транспорт (лениво) ---------- */
 let transportLoaded = false;
 map.on('overlayadd', e=>{
   if(e.name==='Транспорт' && !transportLoaded){
@@ -61,58 +61,54 @@ const catLayers = {
 fetch('data/points.geojson')
   .then(r=>r.json())
   .then(json=>{
+
     L.geoJSON(json,{
-      pointToLayer: (f,latlng)=>{
-        const cat = (f.properties.cat || 'buildings').toLowerCase();
-        return L.marker(latlng,{icon: icons[cat] || icons.buildings});
+      pointToLayer:(f,latlng)=>{
+        const cat=(f.properties.cat||'buildings').toLowerCase();
+        return L.marker(latlng,{icon:icons[cat]||icons.buildings});
       },
       onEachFeature:(f,lyr)=>{
-        const p = f.properties || {};
-
+        const p=f.properties||{};
         lyr.bindPopup(
           `${p.img ? `<img class="popup-img" src="${p.img}" style="cursor:zoom-in"><br>` : ''}
-           <div class="popup-title">${p.name || ''}</div>
+           <div class="popup-title">${p.name||''}</div>
            ${p.descr ? `<div class="popup-text">${p.descr}</div>` : ''}`
         );
 
-        const lay = (p.layer || 'genplan').trim().toLowerCase();
-        (layers[lay] || layers.genplan).addLayer(lyr);
-
-        const cat = (p.cat || 'buildings').toLowerCase();
-        (catLayers[cat] || catLayers.buildings).addLayer(lyr);
+        (layers[(p.layer||'genplan').toLowerCase()]   || layers.genplan ).addLayer(lyr);
+        (catLayers[(p.cat||'buildings').toLowerCase()]|| catLayers.buildings).addLayer(lyr);
       }
     });
-  });
 
-/* ---------- чек-боксы ---------- */
-L.control.layers(
-  null,
-  {
-    'Генплан'           : layers.genplan,
-    'Транспорт'         : layers.transport,
-    'Здания (оранж.)'   : catLayers.buildings,
-    'Благоустр. (фиол.)': catLayers.landscape
-  },
-  {collapsed:false}
-).addTo(map);
+    /* ---------- чек-боксы (после загрузки точек) ---------- */
+    L.control.layers(
+      null,
+      {
+        'Генплан'                   : layers.genplan,
+        'Транспорт'                 : layers.transport,
+        'Здания (оранж.)'           : catLayers.buildings,
+        'Благоустройство (фиол.)'   : catLayers.landscape
+      },
+      {collapsed:false}
+    ).addTo(map);
 
-layers.genplan.addTo(map);
-catLayers.buildings.addTo(map);
-catLayers.landscape.addTo(map);
+    layers.genplan.addTo(map);       // стартовые слои
+    catLayers.buildings.addTo(map);
+    catLayers.landscape.addTo(map);
+});
 
 /* ---------- Лайтбокс ---------- */
 function showLightbox(src){
   if(document.querySelector('.lb-overlay')) return;
-  const w = document.createElement('div');
-  w.className = 'lb-overlay';
-  w.innerHTML = `<button class="lb-close">×</button><img src="${src}" alt="">`;
+  const w=document.createElement('div');
+  w.className='lb-overlay';
+  w.innerHTML=`<button class="lb-close">×</button><img src="${src}" alt="">`;
   document.body.appendChild(w);
-  const close = () => w.remove();
-  w.querySelector('.lb-close').onclick = close;
-w.onclick = e => { if(e.target===w) close(); };
+  const close=()=>w.remove();
+  w.querySelector('.lb-close').onclick=close;
+  w.onclick=e=>{if(e.target===w)close();};
 }
 
-map.on('popupopen', e=>{
-  const img = e.popup._contentNode.querySelector('.popup-img');
+map.on('popupopen', e=>{const img=e.popup._contentNode.querySelector('.popup-img');
   if(img) img.addEventListener('click',()=>showLightbox(img.src));
 });
