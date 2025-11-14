@@ -58,51 +58,34 @@ fetch('data/points.geojson')
       }
     });
 
-    /* ---------- контрол «Слои» ---------- */
-    L.control.layers(
-      { 'Генплан': raster.genplan, 'Транспорт': raster.transport },
-      null,
-      { collapsed:false }
-    ).addTo(map);
+   /* ---------- контрол «Категории» ---------- */
+const catCtrl = L.control.layers(
+  null,
+  {
+    '<span class="legend-icon orange"></span> Здания'     : L.layerGroup(),
+    '<span class="legend-icon violet"></span> Благоустр.' : L.layerGroup()
+  },
+  { collapsed:false, sanitize:false }          // ← отключили очистку HTML
+).addTo(map);
 
-    /* ---------- контрол «Категории» ---------- */
-    const catCtrl = L.control.layers(
-      null,
-      {
-        '<span class="legend-icon orange"></span> Здания'      : L.layerGroup(),
-        '<span class="legend-icon violet"></span> Благоустр.'  : L.layerGroup()
-      },
-      { collapsed:false }
-    ).addTo(map);
+/* отметим чек-боксы сразу */
+Object.values(catCtrl._layers).forEach(o => map.addLayer(o.layer));
 
-    /* отметим чек-боксы сразу, чтобы галочки стояли */
-    Object.values(catCtrl._layers).forEach(o => map.addLayer(o.layer));
-
-    /* показать маркеры стартового слоя (генплан) */
-    cats.forEach(c => map.addLayer(combo.genplan[c]));
-
-    /* ---------- переключение подложки ---------- */
-    map.on('baselayerchange', e => {
-      cats.forEach(c => map.removeLayer(combo[activeLayer][c]));   // убрать старые
-      activeLayer = (e.name === 'Транспорт') ? 'transport' : 'genplan';
-      Object.values(catCtrl._layers).forEach(o => {
-        const c = o.name.includes('Здания') ? 'buildings' : 'landscape';
-        if (map.hasLayer(o.layer)) map.addLayer(combo[activeLayer][c]);
-      });
-    });
-
-    /* ---------- переключение категорий ---------- */
-    catCtrl.on('overlayadd',   e=>{
-      const c = e.name.includes('Здания') ? 'buildings' : 'landscape';
-      map.addLayer(combo[activeLayer][c]);
-    });
-    catCtrl.on('overlayremove',e=>{
-      const c = e.name.includes('Здания') ? 'buildings' : 'landscape';
-      map.removeLayer(combo[activeLayer][c]);
-    });
+/* ---------- реагируем на события карты ---------- */
+map.on('overlayadd',  e=>{
+  const name=e.name.includes('Здания')?'buildings':
+              e.name.includes('Благоустр')?'landscape':null;
+  if(name) map.addLayer(combo[activeLayer][name]);
+});
+map.on('overlayremove', e=>{
+  const name=e.name.includes('Здания')?'buildings':
+              e.name.includes('Благоустр')?'landscape':null;
+  if(name) map.removeLayer(combo[activeLayer][name]);
+});
 
   });   // конец fetch
 
 /* ===== легенда CSS уже в style.css ===== */
+
 
 
