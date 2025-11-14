@@ -58,34 +58,58 @@ fetch('data/points.geojson')
       }
     });
 
-   /* ---------- контрол «Категории» ---------- */
-const catCtrl = L.control.layers(
-  null,
-  {
-    '<span class="legend-icon orange"></span> Здания'     : L.layerGroup(),
-    '<span class="legend-icon violet"></span> Благоустр.' : L.layerGroup()
-  },
-  { collapsed:false, sanitize:false }          // ← отключили очистку HTML
-).addTo(map);
+      /* ---------- контрол «Категории» ---------- */
+    const catCtrl = L.control.layers(
+      null,
+      {
+        '<span class="legend-icon orange"></span> Здания'      : L.layerGroup(),
+        '<span class="legend-icon violet"></span> Благоустр.'  : L.layerGroup()
+      },
+      { collapsed:false, sanitize:false }
+    ).addTo(map);
 
-/* отметим чек-боксы сразу */
-Object.values(catCtrl._layers).forEach(o => map.addLayer(o.layer));
+    // проставляем галочки визуально
+    Object.values(catCtrl._layers).forEach(o => map.addLayer(o.layer));
 
-/* ---------- реагируем на события карты ---------- */
-map.on('overlayadd',  e=>{
-  const name=e.name.includes('Здания')?'buildings':
-              e.name.includes('Благоустр')?'landscape':null;
-  if(name) map.addLayer(combo[activeLayer][name]);
+    /* ---------- отображаем стартовый набор ---------- */
+    cats.forEach(c => map.addLayer(combo.genplan[c]));
+
+    /* ---------- реакция на смену подложки ---------- */
+    map.on('baselayerchange', e=>{
+      cats.forEach(c => map.removeLayer(combo[activeLayer][c]));
+      activeLayer = (e.name === 'Транспорт') ? 'transport' : 'genplan';
+
+      Object.values(catCtrl._layers).forEach(o=>{
+        const c = o.name.includes('Здания') ? 'buildings' : 'landscape';
+        if(map.hasLayer(o.layer)) map.addLayer(combo[activeLayer][c]);
+      });
+    });
+
+    /* ---------- реакция на категории ---------- */
+    map.on('overlayadd',   e=>{
+      const c = e.name.includes('Здания') ? 'buildings' : 'landscape';
+      map.addLayer(combo[activeLayer][c]);
+    });
+    map.on('overlayremove',e=>{
+      const c = e.name.includes('Здания') ? 'buildings' : 'landscape';
+      map.removeLayer(combo[activeLayer][c]);
+    });
+});   // ← ЭТО — закрывающая скобка fetch!
+
+/* ========= лайтбокс ========= */
+function showLightbox(src){
+  if(document.querySelector('.lb-overlay')) return;
+  const w=document.createElement('div');
+  w.className='lb-overlay';
+  w.innerHTML=`<button class="lb-close">×</button><img src="${src}" alt="">`;
+  document.body.appendChild(w);
+  w.querySelector('.lb-close').onclick=()=>w.remove();
+  w.onclick=e=>{ if(e.target===w) w.remove(); };
+}
+map.on('popupopen', e=>{
+  const img=e.popup._contentNode.querySelector('.popup-img');
+  if(img) img.addEventListener('click',()=>showLightbox(img.src));
 });
-map.on('overlayremove', e=>{
-  const name=e.name.includes('Здания')?'buildings':
-              e.name.includes('Благоустр')?'landscape':null;
-  if(name) map.removeLayer(combo[activeLayer][name]);
-});
-
-  });   // конец fetch
-
-/* ===== легенда CSS уже в style.css ===== */
 
 
 
