@@ -104,7 +104,14 @@ function showLightbox(src){
   w.onclick=e=>{if(e.target===w)close();};
 }
 
-map.on('popupopen', e=>{
-  const img=e.popup._contentNode.querySelector('.popup-img');
-  if(img) img.addEventListener('click',()=>showLightbox(img.src));
+map.on('popupopen', e => {
+  const img = e.popup._contentNode.querySelector('.popup-img');
+  if (!img) return;
+
+  img.addEventListener('click', () => {
+    // если оверлей уже висит – не открываем второй раз
+    if (document.querySelector('.lb-overlay')) return;
+    showLightbox(img.src);
+  });
 });
+
