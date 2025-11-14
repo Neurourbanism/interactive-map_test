@@ -36,58 +36,73 @@ const icons={
 
 /* ===== данные ===== */
 fetch('data/points.geojson')
- .then(r=>r.json())
- .then(json=>{
-   L.geoJSON(json,{
-     pointToLayer:(f,ll)=>{
-       const cat=(f.properties.cat||'buildings').toLowerCase();
-       return L.marker(ll,{icon:icons[cat]||icons.buildings});
-     },
-     onEachFeature:(f,lyr)=>{
-       const p=f.properties||{};
-       lyr.bindPopup(
-         `${p.img?`<img class="popup-img" src="${p.img}" style="cursor:zoom-in"><br>`:''}
-          <div class="popup-title">${p.name||''}</div>
-          ${p.descr?`<div class="popup-text">${p.descr}</div>`:''}`);
-       const lay=(p.layer||'genplan').toLowerCase();
-       const cat=(p.cat  ||'buildings').toLowerCase();
-       combo[lay][cat].addLayer(lyr);
-     }
-   });
+  .then(r => r.json())
+  .then(json => {
 
-   /* --- контрол подложек --- */
-   L.control.layers({'Генплан':raster.genplan,'Транспорт':raster.transport},null,
-                    {collapsed:false}).addTo(map);
+    /* --- раскладываем маркеры --- */
+    L.geoJSON(json, {
+      pointToLayer: (f, ll) => {
+        const cat = (f.properties.cat || 'buildings').toLowerCase();
+        return L.marker(ll, { icon: icons[cat] || icons.buildings });
+      },
+      onEachFeature: (f, lyr) => {
+        const p = f.properties || {};
+        lyr.bindPopup(
+          `${p.img ? `<img class="popup-img" src="${p.img}" style="cursor:zoom-in"><br>` : ''}
+           <div class="popup-title">${p.name || ''}</div>
+           ${p.descr ? `<div class="popup-text">${p.descr}</div>` : ''}`
+        );
+        const lay = (p.layer || 'genplan').toLowerCase();
+        const cat = (p.cat   || 'buildings').toLowerCase();
+        combo[lay][cat].addLayer(lyr);
+      }
+    });
 
-   /* --- контрол категорий --- */
-   const catCtl=L.control.layers(null,{
-      '<span class="legend-icon orange"></span> Здания'      : L.layerGroup(),
-      '<span class="legend-icon violet"></span> Благоустр.'  : L.layerGroup()
-   },{collapsed:false}).addTo(map);
+    /* ---------- контрол «Слои» ---------- */
+    L.control.layers(
+      { 'Генплан': raster.genplan, 'Транспорт': raster.transport },
+      null,
+      { collapsed:false }
+    ).addTo(map);
 
-   /* старт: обе категории на генплане */
-   cats.forEach(c=>map.addLayer(combo.genplan[c]));
+    /* ---------- контрол «Категории» ---------- */
+    const catCtrl = L.control.layers(
+      null,
+      {
+        '<span class="legend-icon orange"></span> Здания'      : L.layerGroup(),
+        '<span class="legend-icon violet"></span> Благоустр.'  : L.layerGroup()
+      },
+      { collapsed:false }
+    ).addTo(map);
 
-   /* смена подложки */
-   map.on('baselayerchange',e=>{
-     cats.forEach(c=>map.removeLayer(combo[activeLayer][c]));
-     activeLayer=(e.name==='Транспорт')?'transport':'genplan';
-     Object.values(catCtl._layers).forEach(o=>{
-       const c=o.name.includes('Здания')?'buildings':'landscape';
-       if(map.hasLayer(o.layer)) map.addLayer(combo[activeLayer][c]);
-     });
-   });
+    /* отметим чек-боксы сразу, чтобы галочки стояли */
+    Object.values(catCtrl._layers).forEach(o => map.addLayer(o.layer));
 
-   /* категории on/off */
-   catCtrl.on('overlayadd',  e=>{
-  const cat = e.name.includes('Здания') ? 'buildings' : 'landscape';
-  map.addLayer(combo[activeLayer][cat]);
-});
-catCtrl.on('overlayremove', e=>{
-  const cat = e.name.includes('Здания') ? 'buildings' : 'landscape';
-  map.removeLayer(combo[activeLayer][cat]);
-});
-});
+    /* показать маркеры стартового слоя (генплан) */
+    cats.forEach(c => map.addLayer(combo.genplan[c]));
+
+    /* ---------- переключение подложки ---------- */
+    map.on('baselayerchange', e => {
+      cats.forEach(c => map.removeLayer(combo[activeLayer][c]));   // убрать старые
+      activeLayer = (e.name === 'Транспорт') ? 'transport' : 'genplan';
+      Object.values(catCtrl._layers).forEach(o => {
+        const c = o.name.includes('Здания') ? 'buildings' : 'landscape';
+        if (map.hasLayer(o.layer)) map.addLayer(combo[activeLayer][c]);
+      });
+    });
+
+    /* ---------- переключение категорий ---------- */
+    catCtrl.on('overlayadd',   e=>{
+      const c = e.name.includes('Здания') ? 'buildings' : 'landscape';
+      map.addLayer(combo[activeLayer][c]);
+    });
+    catCtrl.on('overlayremove',e=>{
+      const c = e.name.includes('Здания') ? 'buildings' : 'landscape';
+      map.removeLayer(combo[activeLayer][c]);
+    });
+
+  });   // конец fetch
 
 /* ===== легенда CSS уже в style.css ===== */
+
 
