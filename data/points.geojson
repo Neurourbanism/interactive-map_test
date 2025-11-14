@@ -4,10 +4,11 @@
 
     { "type": "Feature",
       "properties": {
-        "name" : "Пешеходная аллея",
-        "layer": "transport",
-        "img"  : "images/alley1.jpg",
-        "descr": "Аллея с деревьями, скамейками и беседками"
+        "name"  : "Пешеходная аллея",
+        "layer" : "transport",
+        "cat"   : "landscape",
+        "img"   : "images/alley1.jpg",
+        "descr" : "Аллея с деревьями, скамейками и беседками"
       },
       "geometry": {
         "type": "Point",
@@ -17,10 +18,11 @@
 
     { "type": "Feature",
       "properties": {
-        "name" : "Детская площадка",
-        "layer": "genplan",
-        "img"  : "images/playground.jpg",
-        "descr": "Площадь 0,8 га"
+        "name"  : "Детская площадка",
+        "layer" : "genplan",
+        "cat"   : "landscape",
+        "img"   : "images/playground.jpg",
+        "descr" : "Площадь 0,8 га"
       },
       "geometry": {
         "type": "Point",
@@ -30,10 +32,11 @@
 
     { "type": "Feature",
       "properties": {
-        "name" : "Жилой дом",
-        "layer": "genplan",
-        "img"  : "images/house.jpg",
-        "descr": "Жилой дом переменной этажности"
+        "name"  : "Жилой дом",
+        "layer" : "genplan",
+        "cat"   : "buildings",
+        "img"   : "images/house.jpg",
+        "descr" : "Жилой дом переменной этажности"
       },
       "geometry": {
         "type": "Point",
@@ -45,6 +48,7 @@
       "properties": {
         "name"        : "Жилой дом",
         "layer"       : "genplan",
+        "cat"         : "buildings",
         "img"         : "images/house2.jpg",
         "descr"       : "В жилом доме гармонично сочетается эстетика и функциональность, высокий уровень сервиса и комфорта. Выразительная авторская архитектура и единственные в Москве фасады башен из натурального камня.",
         "total_area"  : 15000,
