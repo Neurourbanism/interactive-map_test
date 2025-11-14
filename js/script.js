@@ -29,10 +29,10 @@ const layers = {
 };
 
 /* ---------- изображения-оверлеи ---------- */
-L.imageOverlay('images/plan_georeferenced_finalSmall.png',      planBounds, { opacity: .8 })
+L.imageOverlay('images/plan_georeferenced_finalSmall.webp',      planBounds, { opacity: .8 })
  .addTo(layers.genplan);
 
-L.imageOverlay('images/plan_georeferenced_blackSmall.png', planBounds, { opacity: .7 })
+L.imageOverlay('images/plan_georeferenced_blackSmall.webp', planBounds, { opacity: .7 })
  .addTo(layers.transport);
 
 /* ---------- иконка ---------- */
@@ -110,4 +110,5 @@ map.on('popupopen', e => {
   const img = e.popup._contentNode.querySelector('.popup-img');
   if (img) img.addEventListener('click', () => showLightbox(img.src), { once: true });
 });
+
 
