@@ -32,10 +32,6 @@ const sketch = L.layerGroup([
   L.imageOverlay('images/Masterplan2.webp'   , b2, {opacity:.8})
 ]).addTo(map);
 
-const transportRaster = L.layerGroup([
-  L.imageOverlay('images/Transport1New.webp', b1, {opacity:.7}),
-  L.imageOverlay('images/Transport2.webp',    b2, {opacity:.7})
-]);
 
 /* === транспорт-GEOJSON-группа (будет внутри «Транспорт») ====== */
 const transportGroup = L.layerGroup();      // здесь 5 под-слоёв
@@ -218,5 +214,6 @@ map.on('popupopen', e=>{
   e.popup._contentNode.querySelectorAll('.popup-img')
    .forEach(img=>img.addEventListener('click',()=>showLightbox(img.src),{once:true}));
 });
+
 
 
