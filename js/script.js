@@ -219,6 +219,14 @@ map.on('popupopen', e=>{
    .forEach(img=>img.addEventListener('click',()=>showLightbox(img.src),{once:true}));
 });
 
+/********** 8. бренд-ссылка **********/
+const br=document.createElement('a');
+br.className='brand-link';
+br.href='https://t.me/neurourbanism_blog';
+br.target='_blank';
+br.textContent='Neurourbanism ©';
+document.body.appendChild(br);
+
 
 
 
